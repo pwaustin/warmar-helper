@@ -5,6 +5,18 @@ from bs4 import BeautifulSoup
 import re
 
 """
+Transaction class for containing pulled data from warmar pages.
+"""
+
+class Transaction():
+  def __init__(self,orderType,platform,region,status,price):
+    self.orderType = orderType
+    self.platform = platform
+    self.region = region
+    self.status = status
+    self.price = price
+
+"""
 returns the raw html from a URL as a string. 
 will throw exception and return none if html error occurs
 """
@@ -53,12 +65,12 @@ def getTransactionData(url):
     return -1
 
 """
-given the transaction section of a warframe.market page, return a list of all prices
-from ingame, online, pc, en sellers as a sorted list of ints.
+given the transaction section of a warframe.market page, return a list of 
+transaction objects representing relevant info from page buy/sell orders
 returns the list if successful, or -1 in case of error
 """
-def getPrices(data):
-  prices = []
+def getTransactions(data):
+  transactions = []
   #get locations in the string for relevant data values
   orderTypes = [m.end() for m in re.finditer('"order_type": ', data)]
   platforms = [m.end() for m in re.finditer('"platform": ', data)]
@@ -74,14 +86,25 @@ def getPrices(data):
         j[i] = data[j[i]:].partition(",")[0]
         j[i] = j[i].replace('}','')
         j[i] = j[i].replace('"','')
-    #save int plat values from sell orders on pc/en where the user is ingame
+    #create transaction objects and return them
     for i in range(length):
-      if orderTypes[i] == 'sell' and platforms[i] == 'pc' and regions[i] == 'en' and statuses[i] == 'ingame':
-        prices.append(int(platinumVals[i]))
-    prices.sort()
-    return prices
+      transactions.append(Transaction(orderTypes[i],platforms[i],regions[i],statuses[i],platinumVals[i]))
+    return transactions
   else:
     return -1
+
+"""
+given all the transactions from a warframe.market page, return a list of all prices
+from ingame, online, pc, en sellers as a sorted list of ints.
+returns the list if successful, or -1 in case of error
+"""
+def getPrices(transactions):
+    prices = []
+    for i in transactions:
+      if i.orderType == 'sell' and i.platform == 'pc' and i.region == 'en' and i.status == 'ingame':
+        prices.append(i.price)
+    prices.sort()
+    return prices
 
 """
 user facing function for war.mar calls aimed at price checking: 
@@ -91,17 +114,14 @@ timeout behavior is TBD
 """
 def queryMarket(url):
   data = -1
-  prices = -1
+  transactions = -1
   #until good data is acquired, query war.mar
   while data == -1:
     data = getTransactionData(url)
     #if the data was good, try to get prices from it
     if data != -1:
-      prices = getPrices(data)
+      transactions = getTransactions(data)
     #if prices couldn't be gotten, try again with new data
-    if prices == -1:
+    if transactions == -1:
       data = -1
-  return prices
-
-#test a valid war.mar URL here
-print(queryMarket('https://warframe.market/items/akbolto_prime_receiver'))
+  return getPrices(transactions)
