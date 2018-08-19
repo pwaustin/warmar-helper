@@ -3,6 +3,8 @@ from requests.exceptions import RequestException
 from contextlib import closing
 from bs4 import BeautifulSoup
 import re
+import reliclib
+relics = reliclib.generate_relics('relics.csv')
 
 """
 Transaction class for containing pulled data from warmar pages.
@@ -125,3 +127,42 @@ def queryMarket(url):
     if transactions == -1:
       data = -1
   return getPrices(transactions)
+
+
+def generate_url(item):
+    rooturl = 'https://warframe.market/items/'
+    removed_words = ['Systems', 'Neuroptics', 'Chassis', 'Cerebrum', 'Carapace']
+    for word in removed_words:
+        if word in item:
+            item = item.replace(' Blueprint', "")
+
+    temp = item.lower()
+    temp = temp.replace(' ', '_')
+
+
+    return rooturl + temp
+
+
+def get_relic_item_prices(input_relic):
+    for relic in relics:
+        if input_relic == relic.name:
+            print(relic.name)
+            for common in relic.commons:
+                print(common)
+                if common != 'Forma Blueprint':
+                    print(queryMarket(generate_url(common)))
+            for uncommon in relic.uncommons:
+                print(uncommon)
+                if uncommon != 'Forma Blueprint':
+                    print(queryMarket((generate_url(uncommon))))
+            print(relic.rare)
+            print(queryMarket((generate_url(relic.rare))))
+            return
+
+    print('Error: Invalid Relic Name (Lith V2, Neo H1, etc.)')
+
+    return
+
+
+get_relic_item_prices('Neo R1')
+
