@@ -23,7 +23,7 @@ def get_expected_value(prices, relic_quality, take_average, rad_share):
             else:
                 total_expected_value += (sum(prices[i])/float(len(prices[i]))) * chance[relic_quality][item_quality]
     else:
-        total_expected_value = -1 # temp value
+        total_expected_value = -1  # temp value
     return total_expected_value
 
 
