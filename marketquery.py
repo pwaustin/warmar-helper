@@ -144,36 +144,50 @@ def queryMarket(url):
     return getPrices(transactions)
 
 
+"""
+generate a valid war.mar URL given a specific item. the market does not use the full item name for certain
+items so this function accounts for that
+"""
+
+
 def generate_url(item):
     rooturl = 'https://warframe.market/items/'
     removed_words = ['Systems', 'Neuroptics', 'Chassis', 'Cerebrum', 'Carapace']
+    # remove the word Blueprint if it contains a component blueprint name
     for word in removed_words:
         if word in item:
             item = item.replace(' Blueprint', "")
 
+    # lower the string and replace spaces with underscores
     temp = item.lower()
     temp = temp.replace(' ', '_')
 
     return rooturl + temp
 
 
+"""
+get the price of the individual items of a relic 
+"""
+
+
 def get_relic_item_prices(input_relic, relics):
+    result = []
     for relic in relics:
         if input_relic == relic.name:
-            print(relic.name)
             for common in relic.commons:
-                print(common)
                 if common != 'Forma Blueprint':
-                    print(queryMarket(generate_url(common)))
+                    result.append(queryMarket(generate_url(common)))
+                else:
+                    result.append([35/3])
             for uncommon in relic.uncommons:
-                print(uncommon)
                 if uncommon != 'Forma Blueprint':
-                    print(queryMarket((generate_url(uncommon))))
-            print(relic.rare)
-            print(queryMarket((generate_url(relic.rare))))
-            return
+                    result.append(queryMarket((generate_url(uncommon))))
+                else:
+                    result.append([35/3])
 
-    print('Error: Invalid Relic Name (Lith V2, Neo H1, etc.)')
+            result.append(queryMarket((generate_url(relic.rare))))
+            return result
 
-    return
+    return -1
+
 
