@@ -10,8 +10,8 @@ Transaction class for containing pulled data from warmar pages.
 
 
 class Transaction:
-    def __init__(self, orderType, platform, region, status, price):
-        self.orderType = orderType
+    def __init__(self, order_type, platform, region, status, price):
+        self.order_type = order_type
         self.platform = platform
         self.region = region
         self.status = status
@@ -62,7 +62,7 @@ returns -1 if there is a failure, and the transaction section otherwise
 """
 
 
-def getTransactionData(url):
+def get_transaction_data(url):
     raw_html = get_raw(url)
     if raw_html:
         html = BeautifulSoup(raw_html, 'html.parser')
@@ -83,26 +83,26 @@ info from page buy/sell orders. returns the list if successful, or -1 in case of
 """
 
 
-def getTransactions(data):
+def get_transactions(data):
     transactions = []
     # get locations in the string for relevant data values
-    orderTypes = [m.end() for m in re.finditer('"order_type": ', data)]
+    order_types = [m.end() for m in re.finditer('"order_type": ', data)]
     platforms = [m.end() for m in re.finditer('"platform": ', data)]
     regions = [m.end() for m in re.finditer('"region": ', data)][::2]
     statuses = [m.end() for m in re.finditer('"status": ', data)]
-    platinumVals = [m.end() for m in re.finditer('"platinum": ', data)]
+    platinum_vals = [m.end() for m in re.finditer('"platinum": ', data)]
     # check that list lengths are consistent- error out if not
-    length = len(orderTypes)
-    if all(len(x) == length for x in (platforms, regions, statuses, platinumVals)):
+    length = len(order_types)
+    if all(len(x) == length for x in (platforms, regions, statuses, platinum_vals)):
         # convert indices to values, removing extra chars
         for i in range(length):
-            for j in (orderTypes, platforms, regions, statuses, platinumVals):
+            for j in (order_types, platforms, regions, statuses, platinum_vals):
                 j[i] = data[j[i]:].partition(",")[0]
-                j[i] = j[i].replace('}','')
-                j[i] = j[i].replace('"','')
+                j[i] = j[i].replace('}', '')
+                j[i] = j[i].replace('"', '')
         # create transaction objects and return them
         for i in range(length):
-            transactions.append(Transaction(orderTypes[i],platforms[i],regions[i],statuses[i],platinumVals[i]))
+            transactions.append(Transaction(order_types[i],platforms[i],regions[i],statuses[i],platinum_vals[i]))
         return transactions
     else:
         return -1
@@ -114,10 +114,10 @@ as a sorted list of ints. returns the list if successful, or -1 in case of error
 """
 
 
-def getPrices(transactions):
+def get_prices(transactions):
     prices = []
     for i in transactions:
-        if i.orderType == 'sell' and i.platform == 'pc' and i.region == 'en' and i.status == 'ingame':
+        if i.order_type == 'sell' and i.platform == 'pc' and i.region == 'en' and i.status == 'ingame':
             prices.append(int(i.price))
     prices.sort()
     return prices
@@ -129,19 +129,19 @@ relevant transactions. will make attempts over and over until/unless successful;
 """
 
 
-def queryMarket(url):
+def query_market(url):
     data = -1
     transactions = -1
     # until good data is acquired, query war.mar
     while data == -1:
-        data = getTransactionData(url)
+        data = get_transaction_data(url)
         # if the data was good, try to get prices from it
         if data != -1:
-            transactions = getTransactions(data)
+            transactions = get_transactions(data)
         # if prices couldn't be gotten, try again with new data
         if transactions == -1:
             data = -1
-    return getPrices(transactions)
+    return get_prices(transactions)
 
 
 """
@@ -176,16 +176,16 @@ def get_relic_item_prices(input_relic, relics):
         if input_relic == relic.name:
             for common in relic.commons:
                 if common != 'Forma Blueprint':
-                    result.append(queryMarket(generate_url(common)))
+                    result.append(query_market(generate_url(common)))
                 else:
                     result.append([35/3])
             for uncommon in relic.uncommons:
                 if uncommon != 'Forma Blueprint':
-                    result.append(queryMarket((generate_url(uncommon))))
+                    result.append(query_market((generate_url(uncommon))))
                 else:
                     result.append([35/3])
 
-            result.append(queryMarket((generate_url(relic.rare))))
+            result.append(query_market((generate_url(relic.rare))))
             return result
 
     return -1
