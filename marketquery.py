@@ -125,7 +125,7 @@ def getPrices(transactions):
 
 """
 user facing function for war.mar calls aimed at price checking: given a valid warframe.market url, get sorted list of 
-relevant prices. will make attempts over and over until/unless successful; timeout behavior is TBD
+relevant transactions. will make attempts over and over until/unless successful; timeout behavior is TBD
 """
 
 
