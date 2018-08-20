@@ -15,13 +15,14 @@ while True:
         if quality == 'intact' or quality == 'radiant' or quality == 'exceptional' or quality == 'flawless':
             print('Relic has been found!\nProcessing...')
             relic_price_list = marketquery.get_relic_item_prices(chosen_relic, relics)
+            print('Relic contains:')
             for i in range(0, 6):
                 if i < 3:
-                    print(user_relic.commons[i])
+                    print('Common: ' + user_relic.commons[i])
                 elif i < 5:
-                    print(user_relic.uncommons[i-3])
+                    print('Uncommon: ' + user_relic.uncommons[i-3])
                 else:
-                    print(user_relic.rare)
+                    print('Rare: ' + user_relic.rare)
                 print(relic_price_list[i])
             prices = stats.get_expected_prices(relic_price_list, use_average)
             print('Expected value for single use: ' + str(stats.get_expected_value(prices, quality, False)))
@@ -29,4 +30,4 @@ while True:
         else:
             print('Error: Invalid relic quality. Please try again.')
     else:
-        print('Error: Invalid relic name.')
+        print('Error: Invalid relic name. Please try again.')
