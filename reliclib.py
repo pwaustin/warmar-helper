@@ -38,4 +38,3 @@ def generate_relics(datafile):
 
     file.close()
     return results
-

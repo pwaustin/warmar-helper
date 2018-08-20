@@ -102,7 +102,7 @@ def get_transactions(data):
                 j[i] = j[i].replace('"', '')
         # create transaction objects and return them
         for i in range(length):
-            transactions.append(Transaction(order_types[i],platforms[i],regions[i],statuses[i],platinum_vals[i]))
+            transactions.append(Transaction(order_types[i], platforms[i], regions[i], statuses[i], platinum_vals[i]))
         return transactions
     else:
         return -1
@@ -189,5 +189,3 @@ def get_relic_item_prices(input_relic, relics):
             return result
 
     return -1
-
-
