@@ -38,3 +38,11 @@ def generate_relics(datafile):
 
     file.close()
     return results
+
+
+def make_relic(name, relic_list):
+    for relic in relic_list:
+        if name == relic.name:
+            return relic
+
+    return False
