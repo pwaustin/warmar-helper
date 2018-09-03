@@ -11,7 +11,7 @@ while True:
     if chosen_relic == 'exit':
         break
     elif user_relic:
-        quality = input('Enter relic quality: ')
+        quality = input('Enter relic quality: ').lower()
         if quality == 'intact' or quality == 'radiant' or quality == 'exceptional' or quality == 'flawless':
             print('Relic has been found!\nProcessing...')
             relic_price_list = marketquery.get_relic_item_prices(chosen_relic, relics)
@@ -27,6 +27,7 @@ while True:
             prices = stats.get_expected_prices(relic_price_list, use_average)
             print('Expected value for single use: ' + str(stats.get_expected_value(prices, quality, False)))
             print('Expected value for relic share: ' + str(stats.get_expected_value(prices, quality, True)))
+            print('')
         else:
             print('Error: Invalid relic quality. Please try again.')
     else:

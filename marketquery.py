@@ -99,6 +99,7 @@ def get_transactions(data):
             for j in (order_types, platforms, regions, statuses, platinum_vals):
                 j[i] = data[j[i]:].partition(",")[0]
                 j[i] = j[i].replace('}', '')
+                j[i] = j[i].replace(']', '')
                 j[i] = j[i].replace('"', '')
         # create transaction objects and return them
         for i in range(length):
