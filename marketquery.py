@@ -173,6 +173,7 @@ get the price of the individual items of a relic
 
 def get_relic_item_prices(input_relic, relics):
     result = []
+
     for relic in relics:
         if input_relic == relic.name:
             for common in relic.commons:
