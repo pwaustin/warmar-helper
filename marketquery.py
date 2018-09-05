@@ -175,7 +175,7 @@ def get_relic_item_prices(input_relic, relics):
     result = []
 
     for relic in relics:
-        if input_relic == relic.name:
+        if input_relic.lower() == relic.name.lower():
             for common in relic.commons:
                 if common != 'Forma Blueprint':
                     result.append(query_market(generate_url(common)))

@@ -42,7 +42,7 @@ def generate_relics(datafile):
 
 def make_relic(name, relic_list):
     for relic in relic_list:
-        if name == relic.name:
+        if name.lower() == relic.name.lower():
             return relic
 
     return False
