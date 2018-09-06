@@ -3,6 +3,7 @@ from requests.exceptions import RequestException
 from contextlib import closing
 from bs4 import BeautifulSoup
 import re
+import threading
 
 """
 Transaction class for containing pulled data from warmar pages.
@@ -166,28 +167,47 @@ def generate_url(item):
     return rooturl + temp
 
 
+def multithread_query(url, result):
+    result += query_market(url)
+
+
 """
 get the price of the individual items of a relic 
 """
 
 
 def get_relic_item_prices(input_relic, relics):
-    result = []
+    result = [[] for i in range(6)]
+    threads = []
+    index = 0
 
     for relic in relics:
         if input_relic.lower() == relic.name.lower():
+
             for common in relic.commons:
                 if common != 'Forma Blueprint':
-                    result.append(query_market(generate_url(common)))
+                    threadObj = threading.Thread(target = multithread_query, args = [generate_url(common), result[index]])
+                    threads.append(threadObj)
+                    threadObj.start()
                 else:
-                    result.append([35/3])
+                    result[index] = [35/3]
+                index += 1
             for uncommon in relic.uncommons:
                 if uncommon != 'Forma Blueprint':
-                    result.append(query_market((generate_url(uncommon))))
+                    threadObj = threading.Thread(target = multithread_query, args = [generate_url(uncommon), result[index]])
+                    threads.append(threadObj)
+                    threadObj.start()
                 else:
-                    result.append([35/3])
+                    result[index] = [35/3]
+                index += 1
+            threadObj = threading.Thread(target = multithread_query, args = [generate_url(uncommon), result[index]])
+            threads.append(threadObj)
+            threadObj.start()
+            index += 1
 
-            result.append(query_market((generate_url(relic.rare))))
+            for threadObj in threads:
+                threadObj.join()
+
             return result
 
     return -1
