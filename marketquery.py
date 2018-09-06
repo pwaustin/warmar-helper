@@ -169,6 +169,7 @@ def generate_url(item):
 
 def multithread_query(url, result):
     result += query_market(url)
+    print(url)
 
 
 """
@@ -200,7 +201,7 @@ def get_relic_item_prices(input_relic, relics):
                 else:
                     result[index] = [35/3]
                 index += 1
-            threadObj = threading.Thread(target = multithread_query, args = [generate_url(uncommon), result[index]])
+            threadObj = threading.Thread(target = multithread_query, args = [generate_url(relic.rare), result[index]])
             threads.append(threadObj)
             threadObj.start()
             index += 1
