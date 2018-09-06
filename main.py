@@ -5,7 +5,7 @@ import stats
 use_average = False
 relics = reliclib.generate_relics('relics.csv')
 
-qualities_abrev = {'i':'intact', 'f':'flawless', 'e':'exceptional', 'r':'radiant'}
+qualities_abrev = {'i': 'intact', 'f': 'flawless', 'e': 'exceptional', 'r': 'radiant'}
 qualities = ['intact', 'flawless', 'exceptional', 'radiant']
 
 while True:
