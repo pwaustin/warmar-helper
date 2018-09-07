@@ -194,7 +194,8 @@ def get_relic_item_prices(input_relic, relics):
                 index += 1
             for uncommon in relic.uncommons:
                 if uncommon != 'Forma Blueprint':
-                    thread_obj = threading.Thread(target=multithread_query, args=[generate_url(uncommon), result[index]])
+                    thread_obj = threading.Thread(target=multithread_query,
+                                                  args=[generate_url(uncommon), result[index]])
                     threads.append(thread_obj)
                     thread_obj.start()
                 else:
