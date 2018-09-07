@@ -169,7 +169,6 @@ def generate_url(item):
 
 def multithread_query(url, result):
     result += query_market(url)
-    print(url)
 
 
 """
@@ -187,27 +186,27 @@ def get_relic_item_prices(input_relic, relics):
 
             for common in relic.commons:
                 if common != 'Forma Blueprint':
-                    threadObj = threading.Thread(target = multithread_query, args = [generate_url(common), result[index]])
-                    threads.append(threadObj)
-                    threadObj.start()
+                    thread_obj = threading.Thread(target=multithread_query, args=[generate_url(common), result[index]])
+                    threads.append(thread_obj)
+                    thread_obj.start()
                 else:
                     result[index] = [35/3]
                 index += 1
             for uncommon in relic.uncommons:
                 if uncommon != 'Forma Blueprint':
-                    threadObj = threading.Thread(target = multithread_query, args = [generate_url(uncommon), result[index]])
-                    threads.append(threadObj)
-                    threadObj.start()
+                    thread_obj = threading.Thread(target=multithread_query, args=[generate_url(uncommon), result[index]])
+                    threads.append(thread_obj)
+                    thread_obj.start()
                 else:
                     result[index] = [35/3]
                 index += 1
-            threadObj = threading.Thread(target = multithread_query, args = [generate_url(relic.rare), result[index]])
-            threads.append(threadObj)
-            threadObj.start()
+            thread_obj = threading.Thread(target=multithread_query, args=[generate_url(relic.rare), result[index]])
+            threads.append(thread_obj)
+            thread_obj.start()
             index += 1
 
-            for threadObj in threads:
-                threadObj.join()
+            for thread_obj in threads:
+                thread_obj.join()
 
             return result
 

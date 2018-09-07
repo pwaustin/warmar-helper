@@ -5,7 +5,7 @@ import stats
 use_average = False
 relics = reliclib.generate_relics('relics.csv')
 
-qualities_abrev = {'i':'intact', 'f':'flawless', 'e':'exceptional', 'r':'radiant'}
+qualities_abrev = {'i': 'intact', 'f': 'flawless', 'e': 'exceptional', 'r': 'radiant'}
 qualities = ['intact', 'flawless', 'exceptional', 'radiant']
 
 while True:
@@ -15,7 +15,7 @@ while True:
         break
     elif user_relic:
         quality = input('Enter relic quality: ').lower()
-        quality = qualities_abrev.get(quality.lower(), quality)
+        quality = qualities_abrev.get(quality, quality)
         if quality in qualities:
             print('Relic has been found!\nProcessing...')
             relic_price_list = marketquery.get_relic_item_prices(chosen_relic, relics)
