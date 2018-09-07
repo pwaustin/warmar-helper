@@ -37,7 +37,7 @@ def calc_relic(relic, relics, text):
 
 def gui():
     root = tk.Tk()
-    root.title("ttk.Notebook")
+    root.title("WarMar Helper")
 
     nb = ttk.Notebook(root)
 
