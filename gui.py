@@ -6,6 +6,32 @@ import reliclib
 import marketquery
 import stats
 
+class AutoGrid(tk.Frame):
+    def __init__(self, master=None, **kwargs):
+        tk.Frame.__init__(self, master, **kwargs)
+        self.columns = None
+        self.bind('<Configure>', self.regrid)
+
+    def regrid(self, event=None):
+        width = self.winfo_width()
+        slaves = self.grid_slaves()
+        max_width = max(slave.winfo_width() for slave in slaves)
+        cols = width // max_width
+        if cols == self.columns: # if the column number has not changed, abort
+            return
+        for i, slave in enumerate(slaves):
+            slave.grid_forget()
+            slave.grid(row=i//cols, column=i%cols)
+        self.columns = cols
+
+class RelicButton(tk.Frame):
+    def __init__(self, master=None, **kwargs):
+        tk.Frame.__init__(self, master, bd=5, relief=tk.RAISED, **kwargs)
+
+        tk.Label(self, text="name").pack(pady=10)
+        tk.Label(self, text=" info ........ info ").pack(pady=10)
+        tk.Label(self, text="data\n"*5).pack(pady=10)
+
 
 def append_text(message, text):
     text.configure(state='normal')
@@ -40,13 +66,19 @@ def gui():
     root.title("WarMar Helper")
 
     nb = ttk.Notebook(root)
+    nb.pack(expand=True, fill="both")
 
     # adding Frames as pages for the ttk.Notebook 
     # first page, which would get widgets gridded into it
-    lith = ttk.Frame(nb)
-    meso = ttk.Frame(nb)
-    neo = ttk.Frame(nb)
-    axi = ttk.Frame(nb)
+    lith = AutoGrid(nb)
+    meso = AutoGrid(nb)
+    neo = AutoGrid(nb)
+    axi = AutoGrid(nb)
+
+    lith.pack(expand=True, fill="both")
+    meso.pack(expand=True, fill="both")
+    neo.pack(expand=True, fill="both")
+    axi.pack(expand=True, fill="both")
 
     relics = reliclib.generate_relics('relics.csv')
 
@@ -59,17 +91,15 @@ def gui():
 
     for relic in relics:
         if relic.name.startswith('Lith'):
-            b = tk.Button(lith, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text))
-            b.pack(side = tk.LEFT)
+            #b = tk.Button(lith, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text))
+            tk.Button(lith, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text)).grid()
+            #RelicButton(lith).grid()
         elif relic.name.startswith('Meso'):
-            b = tk.Button(meso, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text))
-            b.pack(side = tk.LEFT)
+            tk.Button(meso, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text)).grid()
         elif relic.name.startswith('Neo'):
-            b = tk.Button(neo, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text))
-            b.pack(side = tk.LEFT)
+            tk.Button(neo, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text)).grid()
         elif relic.name.startswith('Axi'):
-            b = tk.Button(axi, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text))
-            b.pack(side = tk.LEFT)
+            tk.Button(axi, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text)).grid()
 
     
 
@@ -78,8 +108,8 @@ def gui():
     nb.add(neo, text='Neo')
     nb.add(axi, text='Axi')
 
-    nb.pack(expand=1, fill="both")
-    page2.pack(expand=1, fill="both")
+    
+    page2.pack(expand=True, fill="both")
 
     root.mainloop()
 
