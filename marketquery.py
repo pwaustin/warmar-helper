@@ -154,15 +154,9 @@ items so this function accounts for that
 
 def generate_url(item):
     rooturl = 'https://warframe.market/items/'
-    removed_words = ['Systems', 'Neuroptics', 'Chassis', 'Cerebrum', 'Carapace']
-    ampersand = '&'
-    # remove the word Blueprint if it contains a component blueprint name
-    for word in removed_words:
-        if word in item:
-            item = item.replace(' Blueprint', "")
-    if ampersand in item:
-        item = item.replace('&', 'and')
 
+    # check to see if the item name needs adjustments for the website URL
+    item = check_item_name_exceptions(item)
 
     # lower the string and replace spaces with underscores
     temp = item.lower()
@@ -173,6 +167,27 @@ def generate_url(item):
 
 def multithread_query(url, result):
     result += query_market(url)
+
+
+"""
+check the name of the item and see if it needs to be adjusted to match the URL version
+"""
+
+
+def check_item_name_exceptions(item):
+    removed_words = ['Systems', 'Neuroptics', 'Chassis', 'Cerebrum', 'Carapace']
+    ampersand = '&'
+    kavasa_prime = 'Kavasa Prime'
+    # remove the word Blueprint if it contains a component blueprint name
+    for word in removed_words:
+        if word in item:
+            item = item.replace(' Blueprint', "")
+    if ampersand in item:
+        item = item.replace(ampersand, 'and')
+    if kavasa_prime in item:
+        item = item.replace(kavasa_prime, 'Kavasa Prime Collar')
+
+    return item
 
 
 """
