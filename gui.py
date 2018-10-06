@@ -6,6 +6,9 @@ import reliclib
 import marketquery
 import stats
 
+
+
+
 class AutoGrid(tk.Frame):
     def __init__(self, master=None, **kwargs):
         tk.Frame.__init__(self, master, **kwargs)
@@ -19,18 +22,22 @@ class AutoGrid(tk.Frame):
         cols = width // max_width
         if cols == self.columns: # if the column number has not changed, abort
             return
-        for i, slave in enumerate(slaves):
+        for i, slave in enumerate(reversed(slaves)):
             slave.grid_forget()
             slave.grid(row=i//cols, column=i%cols)
         self.columns = cols
 
 class RelicButton(tk.Frame):
-    def __init__(self, master=None, **kwargs):
+    def __init__(self, relic, relics, text, master=None, **kwargs):
         tk.Frame.__init__(self, master, bd=5, relief=tk.RAISED, **kwargs)
 
-        tk.Label(self, text="name").pack(pady=10)
-        tk.Label(self, text=" info ........ info ").pack(pady=10)
-        tk.Label(self, text="data\n"*5).pack(pady=10)
+        helv36 = font.Font(family='Helvetica', size=20, weight='bold')
+
+        tk.Label(self, font=helv36, text=relic.name.split()[1]).grid(row=0, column=1, columnspan=4)
+        tk.Button(self, text='I', width=2, command = lambda relic=relic: calc_relic(relic, relics, 'intact', text)).grid(row=1, column=1)
+        tk.Button(self, text='F', width=2, command = lambda relic=relic: calc_relic(relic, relics, 'flawless', text)).grid(row=1, column=2)
+        tk.Button(self, text='E', width=2, command = lambda relic=relic: calc_relic(relic, relics, 'exceptional', text)).grid(row=1, column=3)
+        tk.Button(self, text='R', width=2, command = lambda relic=relic: calc_relic(relic, relics, 'radiant', text)).grid(row=1, column=4)
 
 
 def append_text(message, text):
@@ -40,9 +47,8 @@ def append_text(message, text):
     # Autoscroll to the bottom
     text.yview(tk.END)
 
-def calc_relic(relic, relics, text):
-            quality = 'radiant'
-            use_average = False
+def calc_relic(relic, relics, quality, text):
+            trust_lowest = False
 
             append_text(relic.name, text)
             relic_price_list = marketquery.get_relic_item_prices(relic.name, relics)
@@ -55,7 +61,7 @@ def calc_relic(relic, relics, text):
                 else:
                     append_text('Rare: ' + relic.rare, text)
                 append_text(str(relic_price_list[i]), text)
-            prices = stats.get_expected_prices(relic_price_list, use_average)
+            prices = stats.get_expected_prices(relic_price_list, trust_lowest)
             append_text('Expected value for single use: ' + str(stats.get_expected_value(prices, quality, False)), text)
             append_text('Expected value for relic share: ' + str(stats.get_expected_value(prices, quality, True)), text)
             append_text('', text)
@@ -92,14 +98,14 @@ def gui():
     for relic in relics:
         if relic.name.startswith('Lith'):
             #b = tk.Button(lith, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text))
-            tk.Button(lith, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text)).grid()
-            #RelicButton(lith).grid()
+            #tk.Button(lith, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text)).grid()
+            RelicButton(relic=relic, relics=relics, text=text, master=lith).grid()
         elif relic.name.startswith('Meso'):
-            tk.Button(meso, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text)).grid()
+            RelicButton(relic=relic, relics=relics, text=text, master=meso).grid()
         elif relic.name.startswith('Neo'):
-            tk.Button(neo, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text)).grid()
+            RelicButton(relic=relic, relics=relics, text=text, master=neo).grid()
         elif relic.name.startswith('Axi'):
-            tk.Button(axi, text=relic.name.split()[1], font=helv36, command = lambda relic=relic: calc_relic(relic, relics, text)).grid()
+            RelicButton(relic=relic, relics=relics, text=text, master=axi).grid()
 
     
 

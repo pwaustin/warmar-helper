@@ -155,11 +155,15 @@ items so this function accounts for that
 def generate_url(item):
     rooturl = 'https://warframe.market/items/'
     removed_words = ['Systems', 'Neuroptics', 'Chassis', 'Cerebrum', 'Carapace']
+    ampersand = '&'
     # remove the word Blueprint if it contains a component blueprint name
     for word in removed_words:
         if word in item:
             item = item.replace(' Blueprint', "")
+    if ampersand in item:
+        item = item.replace('&', 'and')
 
+    
     # lower the string and replace spaces with underscores
     temp = item.lower()
     temp = temp.replace(' ', '_')

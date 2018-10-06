@@ -10,9 +10,9 @@ def get_expected_prices(prices, take_average):
     expected_prices = []
     for price_set in prices:
         if take_average is True:
-            expected_prices.append(price_set[0])
-        else:
             expected_prices.append(sum(price_set)/float(len(price_set)))
+        else:
+            expected_prices.append(price_set[0])
     return expected_prices
 
 
